@@ -1,8 +1,11 @@
 import React, { Component } from 'react';
+import { ReactComponent as Drone } from './img/drone.svg';
+import { ReactComponent as Path } from './img/Path.svg';
 
 export default class App extends Component {
   canvasWidth = 500
   canvasHeight =  500
+
 
   state = {
 
@@ -202,7 +205,6 @@ getType = () => {
   drawPaddle = (ctx) => { 
     const paddle = this.state.paddle
     ctx.fillStyle = 'pink'
-    ctx.fillRect(paddle.x, paddle.y - paddle.height, paddle.width, paddle.height)
     ctx.closePath()
 
     if (!this.state.gameState.PAUSE) {
@@ -276,6 +278,8 @@ drawRects = (ctx) => {
  drawBullet = (ctx) => {
    const bullets = [...this.state.bullets];
    const {PAUSE} = this.state.gameState
+   const drone = this.refs.drone
+   const path = this.refs.path
     bullets.forEach(bullet => {
         ctx.fillStyle = 'pink'
         ctx.arc(bullet.x + 10, bullet.y - bullet.width, bullet.width/2, 0, 2 * Math.PI);
@@ -293,6 +297,10 @@ drawRects = (ctx) => {
           bullet.y = bullet.y
         } else {
             bullet.x = this.state.paddle.x + 40
+            drone.style.display = 'block'
+            path.style.display = 'block'
+            drone.style.left = this.state.paddle.x + 12
+            path.style.left = this.state.paddle.x - 255
         }
     })
     this.setState({bullets})
@@ -301,8 +309,8 @@ drawRects = (ctx) => {
   hitRect  = () => {
     const rects = [...this.state.rects]
     const bullets = [...this.state.bullets]
-
-    for (let i = 0; i < rects.length; i ++) {
+    if (!this.state.gameState.LOSE) {
+      for (let i = 0; i < rects.length; i ++) {
         for (let j = 0; j < bullets.length; j++) {
             if (rects[i] && bullets[j] && bullets[j].fired &&  
                 bullets[j].y < rects[i].y+rects[i].size && 
@@ -397,10 +405,13 @@ drawRects = (ctx) => {
                           }
                         })
                     }
-                    this.setState({rects, bullets})
+                   
                 }
         }
     }
+    }
+
+    this.setState({rects, bullets})
 }
 
 
@@ -431,7 +442,7 @@ drawRects = (ctx) => {
   onWin = (ctx) => {
 
     ctx.font = "50px Arial";
-    ctx.fillStyle = "black";
+    ctx.fillStyle = "white";
     ctx.textAlign = "center";
     ctx.fillText("YOU WON", this.canvasWidth / 2, this.canvasHeight / 2);
 
@@ -460,7 +471,7 @@ drawRects = (ctx) => {
   onLose = (ctx) => {
 
     ctx.font = "50px Arial";
-    ctx.fillStyle = "black";
+    ctx.fillStyle = "white";
     ctx.textAlign = "center";
     ctx.fillText("YOU LOST", this.canvasWidth / 2, this.canvasHeight / 2);
 
@@ -470,7 +481,7 @@ drawRects = (ctx) => {
   onStart = (ctx) => {
 
     ctx.font = "30px Arial";
-    ctx.fillStyle = "black";
+    ctx.fillStyle = "white";
     ctx.textAlign = "center";
     ctx.fillText("PRESS SPACEBAR TO START", this.canvasWidth / 2, this.canvasHeight / 2);
 }
@@ -518,8 +529,8 @@ drawRects = (ctx) => {
       bullets = [{
         x: this.state.paddle.x + 40,
         y: this.canvasHeight - this.state.paddle.height,
-        width: 20,
-        speed: 10,
+        width: 5,
+        speed: 5,
         fired: false
     }]
     return {
@@ -590,7 +601,7 @@ onKeyDown = (e) => {
                 bullets.push({
                   x: this.state.paddle.x + 40,
                   y: this.canvasHeight - this.state.paddle.height,
-                  width: 20,
+                  width: 5,
                   speed: 10,
                   fired: false
               })
@@ -633,6 +644,8 @@ onKeyDown = (e) => {
           <span>LIVES: {this.state.gameState.LIVES > 0 ? this.state.gameState.LIVES : 0}</span>
         </div>
         <canvas ref='canvas' width='500' height='500'></canvas>
+        <Path ref='path' className = 'path'/> 
+        <Drone ref='drone' className='drone'/>
       </div>
     )
   }

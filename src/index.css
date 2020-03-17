@@ -1,8 +1,32 @@
 body {
     width: 50vw;
     margin: 0 auto;
+    background-image: url('./img/1920.png');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 100vh;
 }
 
 div {
     outline: none;
+    width: 500px;
+    background-image: url('./img/city.svg');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 90%;
+    position: relative;
+}
+
+.drone {
+    position: absolute;
+    bottom: 0;
+    display: none;
+
+}
+
+.path {
+    display: none;
+    position: absolute;
+    bottom: 10px;
 }
